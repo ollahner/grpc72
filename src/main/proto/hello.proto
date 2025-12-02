@@ -1,5 +1,9 @@
 syntax = "proto3";
 
+// Diese Optionen sind WICHTIG!
+option java_multiple_files = false;
+option java_outer_classname = "Hello"; // Erzeugt die "Hello.java"-Klasse
+
 service HelloWorldService {
   rpc hello(HelloRequest) returns (HelloResponse) {}
 }
