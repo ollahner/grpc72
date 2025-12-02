@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-// Diese Optionen sind WICHTIG!
-option java_multiple_files = false;
-option java_outer_classname = "Hello"; // Erzeugt die "Hello.java"-Klasse
-
+// Service für einfache Begrüßungen und Datenübertragung
 service HelloWorldService {
+  // Standard Hello-World-Begrüßung
   rpc hello(HelloRequest) returns (HelloResponse) {}
+
+  // RPC zur Übertragung eines Data-Warehouse-Datensatzes (WarehouseID, WarehouseName, Timestamp)
+  rpc sendWarehouseData(WarehouseDataRecord) returns (DataResponse) {}
 }
 
 message HelloRequest {
@@ -15,4 +16,16 @@ message HelloRequest {
 
 message HelloResponse {
   string text = 1;
+}
+
+// Nachricht für einen Data-Warehouse-Datensatz mit ID, Name und Zeitstempel
+message WarehouseDataRecord {
+  int32 warehouse_id = 1;     // Eindeutige ID des Lagers
+  string warehouse_name = 2;  // Name des Lagers (z.B. Region Ost, Hauptlager West)
+  int64 timestamp = 3;        // Zeitstempel der Aufzeichnung im Unix-Epoch-Format (Sekunden)
+}
+
+// Antwortnachricht, die den Empfangsstatus bestätigt
+message DataResponse {
+  string message = 1;
 }

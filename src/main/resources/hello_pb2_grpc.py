@@ -5,7 +5,7 @@ import warnings
 
 import hello_pb2 as hello__pb2
 
-GRPC_GENERATED_VERSION = '1.75.1'
+GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in hello_pb2_grpc.py depends on'
+        + ' but the generated code in hello_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class HelloWorldServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service für einfache Begrüßungen und Datenübertragung
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -39,13 +40,27 @@ class HelloWorldServiceStub(object):
                 request_serializer=hello__pb2.HelloRequest.SerializeToString,
                 response_deserializer=hello__pb2.HelloResponse.FromString,
                 _registered_method=True)
+        self.sendWarehouseData = channel.unary_unary(
+                '/HelloWorldService/sendWarehouseData',
+                request_serializer=hello__pb2.WarehouseDataRecord.SerializeToString,
+                response_deserializer=hello__pb2.DataResponse.FromString,
+                _registered_method=True)
 
 
 class HelloWorldServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service für einfache Begrüßungen und Datenübertragung
+    """
 
     def hello(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Standard Hello-World-Begrüßung
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def sendWarehouseData(self, request, context):
+        """RPC zur Übertragung eines Data-Warehouse-Datensatzes (WarehouseID, WarehouseName, Timestamp)
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -58,6 +73,11 @@ def add_HelloWorldServiceServicer_to_server(servicer, server):
                     request_deserializer=hello__pb2.HelloRequest.FromString,
                     response_serializer=hello__pb2.HelloResponse.SerializeToString,
             ),
+            'sendWarehouseData': grpc.unary_unary_rpc_method_handler(
+                    servicer.sendWarehouseData,
+                    request_deserializer=hello__pb2.WarehouseDataRecord.FromString,
+                    response_serializer=hello__pb2.DataResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'HelloWorldService', rpc_method_handlers)
@@ -67,7 +87,8 @@ def add_HelloWorldServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class HelloWorldService(object):
-    """Missing associated documentation comment in .proto file."""
+    """Service für einfache Begrüßungen und Datenübertragung
+    """
 
     @staticmethod
     def hello(request,
@@ -86,6 +107,33 @@ class HelloWorldService(object):
             '/HelloWorldService/hello',
             hello__pb2.HelloRequest.SerializeToString,
             hello__pb2.HelloResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def sendWarehouseData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/HelloWorldService/sendWarehouseData',
+            hello__pb2.WarehouseDataRecord.SerializeToString,
+            hello__pb2.DataResponse.FromString,
             options,
             channel_credentials,
             insecure,
